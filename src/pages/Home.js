@@ -33,7 +33,7 @@ const Home = () => {
                   <div className="small-banner-content position-absolute">
                     <h4>BÁN CHẠY</h4>
                     <h5>iPad S13+ Pro</h5>
-                    <p>Từ 20tr <br />> hoặc 999k/tháng</p>
+                    <p>Từ 20tr <br /> hoặc 999k/tháng</p>
                   </div>
                 </div>
                 <div className="small-banner position-relative">
