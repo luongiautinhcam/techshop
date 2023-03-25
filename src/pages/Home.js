@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Marquee from "react-fast-marquee";
 import BlogCard from "../components/BlogCard";
 import ProductCard from "../components/ProductCard";
+import SpecialProduct from "../components/SpecialProduct";
 
 const Home = () => {
   return (
@@ -212,7 +213,50 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section className="marque-wrapper py-5">
+      <section className="famous-wrapper py-5 home-wrapper-2">
+        <div className="container-xxl">
+          <div className="row">
+            <div className="col-3">
+              <div className="famous-card bg-dark">
+                
+              <h5>Màn hình lớn</h5>
+              <h6>Smart Watch Series 7</h6>
+              <p>Từ 5tr VNĐ hoặc 376k/tháng trong 24 tháng.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="special-wrapper py-5 home-wrapper-2">
+        <div className="container-xxl">
+          <div className="row">
+            <div className="col-12">
+              <h3 className="section-heading">Sản phẩm đặc biệt</h3>
+            </div>
+          </div>
+          <div className="row">
+            <SpecialProduct />
+            <SpecialProduct />
+            <SpecialProduct />
+          </div>
+        </div>
+      </section>
+      <section className="popular-wrapper py-5 home-wrapper-2">
+        <div className="container-xxl">
+          <div className="row">
+            <div className="col-12">
+              <h3 className="section-heading">Sản phẩm phổ biến</h3>
+            </div>
+          </div>
+          <div className="row">
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+            <ProductCard />
+          </div>
+        </div>
+      </section>
+      <section className="marque-wrapper home-wrapper-2 py-5">
         <div className="container-xxl">
           <div className="marquee-inner-wrapper card-wrapper">
             <Marquee className="d-flex">
