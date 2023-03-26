@@ -304,12 +304,15 @@ footer .input-group-text {
   border-radius: 10px;
   overflow: hidden;
 }
-.product-card .product-image{
+
+.product-card .product-image {
   height: 270px;
 }
+
 .product-card .product-image img {
   object-fit: contain;
 }
+
 .product-card .product-image>img:last-child {
   display: none;
 }
@@ -318,6 +321,7 @@ footer .input-group-text {
   display: none;
 
 }
+
 .product-card:hover .product-image>img:last-child {
   display: block;
 }
@@ -362,3 +366,36 @@ footer .input-group-text {
 }
 
 /* Special Product End */
+
+/* Famous Card */
+.famous-card .famous-content {
+  top: 10%;
+  left: 10%;
+}
+.famous-card img {
+  border-radius: 10px;
+}
+.famous-content h5 {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 400px;
+  color: white;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
+.famous-content h6 {
+  font-size: 24px;
+  line-height: 38px;
+  font-weight: 500;
+  color: white;
+}
+
+.famous-content p {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 100;
+  color: white;
+}
+
+/* Famous Card End */

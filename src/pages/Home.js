@@ -217,11 +217,59 @@ const Home = () => {
         <div className="container-xxl">
           <div className="row">
             <div className="col-3">
-              <div className="famous-card bg-dark">
-                
-              <h5>Màn hình lớn</h5>
-              <h6>Smart Watch Series 7</h6>
-              <p>Từ 5tr VNĐ hoặc 376k/tháng trong 24 tháng.</p>
+              <div className="famous-card position-relative">
+                <img
+                  src="images/famous-01.webp"
+                  className="img-fluid"
+                  alt="famous"
+                />
+                <div className="famous-content position-absolute">
+                  <h5>Màn hình lớn</h5>
+                  <h6>Smart Watch Series 7</h6>
+                  <p>Từ 5tr VNĐ hoặc 376k/th trong 24 th.</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="famous-card position-relative">
+                <img
+                  src="images/famous-02.webp"
+                  className="img-fluid"
+                  alt="famous"
+                />
+                <div className="famous-content position-absolute">
+                  <h5 className="text-dark">Màn hình Studio</h5>
+                  <h6 className="text-dark">Độ sáng 600 nits</h6>
+                  <p className="text-dark">Màn hình 27-inch 5K Retina</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="famous-card position-relative">
+                <img
+                  src="images/famous-03.webp"
+                  className="img-fluid"
+                  alt="famous"
+                />
+                <div className="famous-content position-absolute">
+                  <h5 className="text-dark">Điện thoại</h5>
+                  <h6 className="text-dark">iPhone 13 Pro</h6>
+                  <p className="text-dark">Từ 20tr VNĐ hoặc 964k/th trong 24 th.</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-3">
+              <div className="famous-card position-relative">
+                <img
+                  src="images/famous-04.webp"
+                  className="img-fluid"
+                  alt="famous"
+                />
+                <div className="famous-content position-absolute">
+                  <h5 className="text-dark">Loa gia đình</h5>
+                  <h6 className="text-dark">Âm thanh lấp đầy căn phòng</h6>
+                  <p className="text-dark">Từ 16tr VNĐ hoặc 2tr7/th trong 12 th.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -235,6 +283,7 @@ const Home = () => {
             </div>
           </div>
           <div className="row">
+            <SpecialProduct />
             <SpecialProduct />
             <SpecialProduct />
             <SpecialProduct />
