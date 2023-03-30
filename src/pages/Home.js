@@ -254,7 +254,9 @@ const Home = () => {
                 <div className="famous-content position-absolute">
                   <h5 className="text-dark">Điện thoại</h5>
                   <h6 className="text-dark">iPhone 13 Pro</h6>
-                  <p className="text-dark">Từ 20tr VNĐ hoặc 964k/th trong 24 th.</p>
+                  <p className="text-dark">
+                    Từ 20tr VNĐ hoặc 964k/th trong 24 th.
+                  </p>
                 </div>
               </div>
             </div>
@@ -268,7 +270,9 @@ const Home = () => {
                 <div className="famous-content position-absolute">
                   <h5 className="text-dark">Loa gia đình</h5>
                   <h6 className="text-dark">Âm thanh lấp đầy căn phòng</h6>
-                  <p className="text-dark">Từ 16tr VNĐ hoặc 2tr7/th trong 12 th.</p>
+                  <p className="text-dark">
+                    Từ 16tr VNĐ hoặc 2tr7/th trong 12 th.
+                  </p>
                 </div>
               </div>
             </div>
@@ -343,10 +347,20 @@ const Home = () => {
             <div className="col-12">
               <h3 className="section-heading">Blog mới nhất</h3>
             </div>
-            <BlogCard />
-            <BlogCard />
-            <BlogCard />
-            <BlogCard />
+          </div>
+          <div className="row">
+            <div className="col-3">
+              <BlogCard />
+            </div>
+            <div className="col-3">
+              <BlogCard />
+            </div>
+            <div className="col-3">
+              <BlogCard />
+            </div>
+            <div className="col-3">
+              <BlogCard />
+            </div>
           </div>
         </div>
       </section>
