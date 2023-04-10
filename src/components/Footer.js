@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { BsLinkedin, BsGithub, BsYoutube, BsInstagram } from "react-icons/bs";
+import newsletter from "../images/newsletter.png";
 
 const Footer = () => {
   return (
@@ -10,7 +11,7 @@ const Footer = () => {
           <div className="row align-items-center">
             <div className="col-5">
               <div className="footer-top-data d-flex gap-30 align-items-center">
-                <img src="images/newsletter.png" alt="newsletter" />
+                <img src={newsletter} alt="newsletter" />
                 <h2 className="mb-0 text-white">Đăng ký tin mới</h2>
               </div>
             </div>
@@ -38,7 +39,7 @@ const Footer = () => {
               <h4 className="text-white mb-4">Liên hệ chúng tôi</h4>
               <div>
                 <address className="text-white fs-6">
-                  Địa chỉ: 180 Cao Lỗ, Phường 4, <br /> Quận 8, Hồ Chí Minh{" "}
+                  Địa chỉ: 180 Cao Lỗ, Phường 4, <br /> Quận 8, Hồ Chí Minh
                   <br />
                   Mã bưu điện: 700000
                 </address>
