@@ -178,9 +178,14 @@ const OurStore = () => {
                   <p className="mb-0 d-block" style={{ width: "100px" }}>
                     Sắp xếp theo:
                   </p>
-                  <select name="" className="form-control form-select" id="">
+                  <select
+                    name=""
+                    defaultValue={"manual"}
+                    className="form-control form-select"
+                    id=""
+                  >
                     <option value="manual">Đặc tính</option>
-                    <option value="best-selling" selected="selected">
+                    <option value="best-selling">
                       Bán chạy
                     </option>
                     <option value="title-ascending">A-Z</option>
