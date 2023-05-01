@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
 import BreadCrumb from "../components/BreadCrumb";
-import Color from "../components/Color";
-import Container from "../components/Container";
 import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
+import Color from "../components/Color";
+import Container from "../components/Container";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProducts } from "../features/products/productSlice";
 
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
+  const productState = useSelector((state) => state?.product?.product);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getProducts();
+  }, []);
+  const getProducts = () => {
+    dispatch(getAllProducts());
+  };
   return (
     <>
       <Meta title={"Cửa hàng chúng tôi"} />
@@ -185,9 +195,7 @@ const OurStore = () => {
                     id=""
                   >
                     <option value="manual">Đặc tính</option>
-                    <option value="best-selling">
-                      Bán chạy
-                    </option>
+                    <option value="best-selling">Bán chạy</option>
                     <option value="title-ascending">A-Z</option>
                     <option value="title-descending">Z-A</option>
                     <option value="price-ascending">Giá, thấp đến cao</option>
@@ -237,7 +245,10 @@ const OurStore = () => {
             </div>
             <div className="products-list pb-5">
               <div className="d-flex gap-10 flex-wrap">
-                <ProductCard grid={grid} />
+                <ProductCard
+                  data={productState ? productState : []}
+                  grid={grid}
+                />
               </div>
             </div>
           </div>
