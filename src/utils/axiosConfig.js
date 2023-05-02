@@ -3,17 +3,17 @@ const getTokenFromLocalStorage = localStorage.getItem("customer")
   ? JSON.parse(localStorage.getItem("customer"))
   : null;
 
-export const config = {
-  // headers: {
-  //   Authorization: `Bearer ${
-  //     getTokenFromLocalStorage.token !== null ? getTokenFromLocalStorage.token : ""
-  //   }`,
-  //   Accept: "application/json",
-  // },
+export const config = { 
   headers: {
-    Authorization: `Bearer ${getTokenFromLocalStorage.token}`,
+    Authorization: `Bearer ${
+      getTokenFromLocalStorage.token !== null ? getTokenFromLocalStorage.token : ""
+    }`,
     Accept: "application/json",
   },
+  // headers: {
+  //   Authorization: `Bearer ${getTokenFromLocalStorage.token}`,
+  //   Accept: "application/json",
+  // },
 };
 // const getTokenFromLocalStorage = localStorage.getItem("customer")
 //   ? JSON.parse(localStorage.getItem("customer"))
