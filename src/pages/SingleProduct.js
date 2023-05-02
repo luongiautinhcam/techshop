@@ -53,43 +53,13 @@ const SingleProduct = () => {
               </div>
             </div>
             <div className="other-product-images d-flex flex-wrap gap-15">
-              {/* {productState?.images.map((item, index) => {
+              {productState?.images.map((item, index) => {
                 return (
                   <div key={index}>
                     <img src={item?.url} className="img-fluid" alt="" />
                   </div>
                 );
-              })} */}
-
-              <div>
-                <img
-                  src="https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-
-              <div>
-                <img
-                  src="https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  src="https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
-              <div>
-                <img
-                  src="https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg"
-                  className="img-fluid"
-                  alt=""
-                />
-              </div>
+              })}
             </div>
           </div>
           <div className="col-6">

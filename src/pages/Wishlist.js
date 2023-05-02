@@ -44,7 +44,7 @@ const Wishlist = () => {
                   />
                   <div className="wishlist-card-image bg-white">
                     <img
-                      src={item?.images[0]}
+                      src={item?.images[0]?.url}
                       // src={
                       //   item?.images[0].url
                       //     ? item?.images[0].url

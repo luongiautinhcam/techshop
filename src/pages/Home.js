@@ -37,6 +37,12 @@ const Home = () => {
   const addToWish = (id) => {
     dispatch(addToWishlist(id));
   };
+
+  //Tien
+  const VND = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
   return (
     <>
       <Container class1="home-wrapper-1 py-5">
@@ -224,7 +230,7 @@ const Home = () => {
                       </div>
                       <div className="product-image">
                         <img
-                          src={item?.images[0]}
+                          src={item?.images[0].url}
                           className="img-fluid mx-auto"
                           alt="product image"
                         />
@@ -244,7 +250,12 @@ const Home = () => {
                           edit={false}
                           activeColor="#ffd700"
                         />
-                        <p className="price">{item?.price}</p>
+                        <p className="price">
+                          {Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(item?.price)}
+                        </p>
                       </div>
                       <div className="action-bar position-absolute">
                         <div className="d-flex flex-column gap-15">
@@ -386,7 +397,7 @@ const Home = () => {
                       </div>
                       <div className="product-image">
                         <img
-                          src={item?.images[0]}
+                          src={item?.images[0]?.url}
                           className="img-fluid mx-auto"
                           alt="product image"
                         />
@@ -406,7 +417,12 @@ const Home = () => {
                           edit={false}
                           activeColor="#ffd700"
                         />
-                        <p className="price">{item?.price}</p>
+                        <p className="price">
+                          {Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(item?.price)}
+                        </p>
                       </div>
                       <div className="action-bar position-absolute">
                         <div className="d-flex flex-column gap-15">
