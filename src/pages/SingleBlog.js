@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import { HiOutlineArrowLeft } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Container from "../components/Container";
+import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
+import { getABlog } from "../features/blogs/blogSlice";
 
 const SingleBlog = () => {
+  const blogState = useSelector((state) => state?.blog?.singleBlog);
+  const location = useLocation();
+  const getBlogId = location.pathname.split("/")[2];
+  const dispatch = useDispatch();
+  useEffect(() => {
+    getblog();
+  }, []);
+  const getblog = () => {
+    dispatch(getABlog(getBlogId));
+  };
   return (
     <>
-      <Meta title={"Tên Blog"} />
-      <BreadCrumb title="Tên Blog" />
+      <Meta title={blogState?.title} />
+      <BreadCrumb title={blogState?.title} />
       <Container class1="blog-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-12">
@@ -18,19 +31,17 @@ const SingleBlog = () => {
                 <HiOutlineArrowLeft className="fs-4" />
                 Trở về Blog
               </Link>
-              <h3 className="title">
-                Cách tạo bảng kế hoạch trên Canva để quản lí công việc một cách
-                dễ dàng hơn
-              </h3>
-              <img src="images/blog-1.jpg" alt="blog" />
-              <p>
-                Nếu bạn là một người bận rộn với hàng tá việc phải làm nhưng lại
-                không biết cách để quản lí một cách hợp lí và bạn đang tìm kiếm
-                một ứng dụng để quản lí các công việc đó của bạn thì với canva
-                bạn không cần phải tải bất kì một ứng dụng nặng nề nào về máy mà
-                vẫn có thể quản lí trực tuyến các công việc của mình một cách
-                hợp lí.
-              </p>
+              <h3 className="title">{blogState?.title}</h3>
+              <img
+                src="/images/blog-1.jpg"
+                className="img-fluid w-100 my-4"
+                alt="blog"
+              />
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: blogState?.decscription,
+                }}
+              ></p>
             </div>
           </div>
         </div>
