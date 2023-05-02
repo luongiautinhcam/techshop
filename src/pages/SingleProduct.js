@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
@@ -7,15 +7,28 @@ import ReactImageZoom from "react-image-zoom";
 import Color from "../components/Color";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Container from "../components/Container";
+import { useDispatch, useSelector } from "react-redux";
+import { getAProduct } from "../features/products/productSlice";
 
 const SingleProduct = () => {
+  const location = useLocation();
+
+  const getProductId = location.pathname.split("/")[2];
+  const dispatch = useDispatch();
+  const productState = useSelector((state) => state.product.singleproduct);
+  useEffect(() => {
+    dispatch(getAProduct(getProductId));
+  }, []);
   const props = {
     width: 500,
     height: 600,
     zoomWidth: 600,
-    img: "https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg",
+    img: productState?.images[0]?.url
+      ? productState?.images[0]?.url
+      : "https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg",
+    // img: "https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg",
   };
   const [orderedProduct, setorderedProduct] = useState(true);
   const copyToClipboard = (text) => {
@@ -29,8 +42,8 @@ const SingleProduct = () => {
   };
   return (
     <>
-      <Meta title={"Tên sản phẩm"} />
-      <BreadCrumb title="Tên sản phẩm" />
+      <Meta title={productState?.title} />
+      <BreadCrumb title={productState?.title} />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-6">
@@ -40,6 +53,14 @@ const SingleProduct = () => {
               </div>
             </div>
             <div className="other-product-images d-flex flex-wrap gap-15">
+              {/* {productState?.images.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <img src={item?.url} className="img-fluid" alt="" />
+                  </div>
+                );
+              })} */}
+
               <div>
                 <img
                   src="https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg"
@@ -47,6 +68,7 @@ const SingleProduct = () => {
                   alt=""
                 />
               </div>
+
               <div>
                 <img
                   src="https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg"
@@ -73,15 +95,15 @@ const SingleProduct = () => {
           <div className="col-6">
             <div className="main-product-details">
               <div className="border-bottom">
-                <h3 className="title">Apple Watch Series 7 LTE 41mm</h3>
+                <h3 className="title">{productState?.title}</h3>
               </div>
               <div className="border-bottom py-3">
-                <p className="price">9990000</p>
+                <p className="price">{productState?.price}</p>
                 <div className="d-flex align-items-center gap-10">
                   <ReactStars
                     count={5}
                     size={24}
-                    value={3}
+                    value={productState?.totalrating}
                     edit={false}
                     activeColor="#ffd700"
                   />
@@ -98,15 +120,15 @@ const SingleProduct = () => {
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Hãng: </h3>
-                  <p className="product-data">Apple</p>
+                  <p className="product-data">{productState?.brand}</p>
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Danh mục: </h3>
-                  <p className="product-data">Đồng hồ</p>
+                  <p className="product-data">{productState?.category}</p>
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Nhãn: </h3>
-                  <p className="product-data">DEF</p>
+                  <p className="product-data">{productState?.tags}</p>
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Tình trạng: </h3>
@@ -179,9 +201,7 @@ const SingleProduct = () => {
                   <a
                     href="javascript:void(0)"
                     onClick={() => {
-                      copyToClipboard(
-                        "https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg"
-                      );
+                      copyToClipboard(window.location.href);
                     }}
                   >
                     Sao chép đường dẫn sản phẩm
@@ -197,12 +217,11 @@ const SingleProduct = () => {
           <div className="col-12">
             <h4>Mô tả</h4>
             <div className="bg-white p-3">
-              <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book.
-              </p>
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: productState?.decscription,
+                }}
+              ></p>
             </div>
           </div>
         </div>
