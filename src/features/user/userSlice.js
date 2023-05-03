@@ -106,7 +106,7 @@ export const authSlice = createSlice({
         state.user = action.payload;
         if (state.isSuccess === true) {
           localStorage.setItem("token", action.payload.token);
-          toast.info("Đăng nhập thành công");
+          toast.info("Đăng nhập thành công", { autoClose: 800 });
         }
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -142,7 +142,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.cartProduct = action.payload;
         if (state.isSuccess === true) {
-          toast.success("Đã thêm sản phẩm vào giỏ");
+          toast.success("Đã thêm sản phẩm vào giỏ", { autoClose: 800 });
         }
       })
       .addCase(addProdToCart.rejected, (state, action) => {

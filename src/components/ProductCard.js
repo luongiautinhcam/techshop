@@ -44,12 +44,12 @@ const ProductCard = (props) => {
                   <img
                     src={item?.images[0]?.url}
                     className="img-fluid mx-auto"
-                    alt="product image"
+                    alt="product"
                   />
                   <img
                     src={watch2}
                     className="img-fluid mx-auto"
-                    alt="product image"
+                    alt="product"
                   />
                 </div>
                 <div className="product-details">
@@ -68,7 +68,12 @@ const ProductCard = (props) => {
                     }`}
                     dangerouslySetInnerHTML={{ __html: item?.decscription }}
                   ></p>
-                  <p className="price">{item?.price}</p>
+                  <p className="price">
+                    {Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(item?.price)}
+                  </p>
                 </div>
                 <div className="action-bar position-absolute">
                   <div className="d-flex flex-column gap-15">

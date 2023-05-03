@@ -245,7 +245,7 @@ const Home = () => {
                         <ReactStars
                           count={5}
                           size={24}
-                          value={item?.totalrating.toString()}
+                          value={Number(item?.totalrating.toString())}
                           edit={false}
                           activeColor="#ffd700"
                         />
@@ -410,7 +410,7 @@ const Home = () => {
                         <ReactStars
                           count={5}
                           size={24}
-                          value={item?.totalrating.toString()}
+                          value={Number(item?.totalrating.toString())}
                           edit={false}
                           activeColor="#ffd700"
                         />

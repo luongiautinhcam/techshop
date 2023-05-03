@@ -17,13 +17,24 @@ const SpecialProduct = (props) => {
             <ReactStars
               count={5}
               size={24}
-              value={totalrating}
+              value={Number(totalrating)}
               edit={false}
               activeColor="#ffd700"
             />
             <p className="price">
-              <span className="red-p">{price}</span> &nbsp;
-              <strike>4tr VNĐ</strike>
+              <span className="red-p text-danger fw-bold">
+                {Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(price)}
+              </span>
+              &nbsp;
+              <strike>
+                {Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(price + (price * 10) / 100)}
+              </strike>
             </p>
             <div className="discount-till d-flex align-items-center gap-10">
               <p className="mb-0">

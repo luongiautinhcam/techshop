@@ -27,7 +27,7 @@ const SingleProduct = () => {
 
   const uploadCart = () => {
     if (color === null) {
-      toast.error("Hãy chọn màu");
+      toast.error("Hãy chọn màu", { autoClose: 800 });
       return false;
     } else {
       dispatch(
@@ -86,7 +86,12 @@ const SingleProduct = () => {
                 <h3 className="title">{productState?.title}</h3>
               </div>
               <div className="border-bottom py-3">
-                <p className="price">{productState?.price}</p>
+                <p className="price">
+                  {Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(productState?.price)}
+                </p>
                 <div className="d-flex align-items-center gap-10">
                   <ReactStars
                     count={5}
