@@ -214,8 +214,7 @@ const Home = () => {
           </div>
           {productState &&
             productState?.map((item, index) => {
-              // Chinh sua code bo [0]
-              if (item?.tags[0] === "popular") {
+              if (item?.tags === "featured") {
                 return (
                   <div key={index} className={"col-3"}>
                     <div className="product-card position-relative">
@@ -232,12 +231,12 @@ const Home = () => {
                         <img
                           src={item?.images[0].url}
                           className="img-fluid mx-auto"
-                          alt="product image"
+                          alt="product"
                         />
                         <img
                           src={watch2}
                           className="img-fluid mx-auto"
-                          alt="product image"
+                          alt="product"
                         />
                       </div>
                       <div className="product-details">
@@ -354,8 +353,7 @@ const Home = () => {
         <div className="row">
           {productState &&
             productState?.map((item, index) => {
-              // Chinh sua code bo [0]
-              if (item?.tags[0] === "special") {
+              if (item?.tags === "special") {
                 return (
                   <SpecialProduct
                     key={index}
@@ -381,8 +379,7 @@ const Home = () => {
         <div className="row">
           {productState &&
             productState?.map((item, index) => {
-              // Chinh sua code bo [0]
-              if (item?.tags[0] === "popular") {
+              if (item?.tags === "popular") {
                 return (
                   <div key={index} className={"col-3"}>
                     <div className="product-card position-relative">
@@ -399,12 +396,12 @@ const Home = () => {
                         <img
                           src={item?.images[0]?.url}
                           className="img-fluid mx-auto"
-                          alt="product image"
+                          alt="product"
                         />
                         <img
                           src={watch2}
                           className="img-fluid mx-auto"
-                          alt="product image"
+                          alt="product"
                         />
                       </div>
                       <div className="product-details">

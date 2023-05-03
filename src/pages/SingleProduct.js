@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
+import { toast } from "react-toastify";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import ProductCard from "../components/ProductCard";
@@ -11,16 +12,34 @@ import { Link, useLocation } from "react-router-dom";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { getAProduct } from "../features/products/productSlice";
+import { addProdToCart } from "../features/user/userSlice";
 
 const SingleProduct = () => {
+  const [color, setColor] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const location = useLocation();
-
   const getProductId = location.pathname.split("/")[2];
   const dispatch = useDispatch();
   const productState = useSelector((state) => state.product.singleproduct);
   useEffect(() => {
     dispatch(getAProduct(getProductId));
   }, []);
+
+  const uploadCart = () => {
+    if (color === null) {
+      toast.error("Hãy chọn màu");
+      return false;
+    } else {
+      dispatch(
+        addProdToCart({
+          productId: productState?._id,
+          quantity,
+          color,
+          price: productState?.price,
+        })
+      );
+    }
+  };
   const props = {
     width: 500,
     height: 600,
@@ -28,11 +47,10 @@ const SingleProduct = () => {
     img: productState?.images[0]?.url
       ? productState?.images[0]?.url
       : "https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg",
-    // img: "https://cdn.tgdd.vn/Products/Images/7077/250639/apple-watch-s7-lte-41mm-den-1-2.jpg",
   };
   const [orderedProduct, setorderedProduct] = useState(true);
   const copyToClipboard = (text) => {
-    console.log("text", text);
+    // console.log("text", text);
     var textField = document.createElement("textarea");
     textField.innerText = text;
     document.body.appendChild(textField);
@@ -79,9 +97,9 @@ const SingleProduct = () => {
                   />
                   <p className="mb-0 t-review">(Dự trên 2 đánh giá)</p>
                 </div>
-                <a className="review-btn" href="#review">
+                <Link to="/" className="review-btn" href="#review">
                   Viết đánh giá
-                </a>
+                </Link>
               </div>
               <div className="py-3">
                 <div className="d-flex gap-10 align-items-center my-2">
@@ -123,7 +141,7 @@ const SingleProduct = () => {
                 </div>
                 <div className="d-flex gap-10 flex-column mt-2 mb-3">
                   <h3 className="product-heading">Màu sắc: </h3>
-                  <Color />
+                  <Color setColor={setColor} colorData={productState?.color} />
                 </div>
                 <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
                   <h3 className="product-heading">Số lượng: </h3>
@@ -136,10 +154,18 @@ const SingleProduct = () => {
                       className="form-control"
                       style={{ width: "70px" }}
                       id=""
+                      onChange={(e) => setQuantity(e.target.value)}
+                      value={quantity}
                     />
                   </div>
                   <div className="d-flex align-items-center gap-30 ms-5">
-                    <button className="button border-0" type="submit">
+                    <button
+                      className="button border-0"
+                      type="button"
+                      onClick={() => {
+                        uploadCart();
+                      }}
+                    >
                       Thêm vào giỏ
                     </button>
                     <button className="button signup">Mua ngay</button>
@@ -147,15 +173,15 @@ const SingleProduct = () => {
                 </div>
                 <div className="d-flex align-items-center gap-15">
                   <div>
-                    <a href="">
+                    <Link to="/">
                       <TbGitCompare className="fs-5 me-2" /> So sánh sản phẩm
-                    </a>
+                    </Link>
                   </div>
                   <div>
-                    <a href="">
+                    <Link to="/">
                       <AiOutlineHeart className="fs-5 me-2" /> Thêm vào yêu
                       thích
-                    </a>
+                    </Link>
                   </div>
                 </div>
                 <div className="d-flex gap-10 flex-column my-3">
@@ -168,14 +194,14 @@ const SingleProduct = () => {
                 </div>
                 <div className="d-flex gap-10 align-items-center my-3">
                   <h3 className="product-heading">Liên kết sản phẩm:</h3>
-                  <a
-                    href="javascript:void(0)"
+                  <Link
+                    to={undefined}
                     onClick={() => {
                       copyToClipboard(window.location.href);
                     }}
                   >
                     Sao chép đường dẫn sản phẩm
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -217,9 +243,12 @@ const SingleProduct = () => {
                 </div>
                 {orderedProduct && (
                   <div>
-                    <a className="text-dark text-decoration-underline" href="">
+                    <Link
+                      to="/"
+                      className="text-dark text-decoration-underline"
+                    >
                       Viết đánh giá
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
