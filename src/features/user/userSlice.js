@@ -218,7 +218,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.updatedCartProduct = action.payload;
         if (state.isSuccess) {
-          toast.success("Cập nhật sản phẩm thành công");
+          toast.success("Cập nhật sản phẩm thành công", { autoClose: 800 });
         }
       })
       .addCase(updateCartProduct.rejected, (state, action) => {

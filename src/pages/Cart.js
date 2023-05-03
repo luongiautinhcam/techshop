@@ -15,6 +15,8 @@ import {
 const Cart = () => {
   const dispatch = useDispatch();
   const [productUpdateDetail, setProductUpdateDetail] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(null);
+
   const userCartState = useSelector((state) => state.auth.cartProducts);
   useEffect(() => {
     dispatch(getUserCart());
@@ -38,7 +40,15 @@ const Cart = () => {
       dispatch(getUserCart());
     }, 200);
   };
-  const updateACartProduct = (productUpdateDetail) => {};
+  useEffect(() => {
+    let sum = 0;
+    for (let index = 0; index < userCartState?.length; index++) {
+      sum =
+        sum +
+        Number(userCartState[index].quantity) * userCartState[index].price;
+      setTotalAmount(sum);
+    }
+  }, [userCartState]);
   return (
     <>
       <Meta title={"Giỏ hàng"} />
@@ -134,13 +144,21 @@ const Cart = () => {
                 <Link to="/product" className="button">
                   Tiếp tục mua hàng
                 </Link>
-                <div className="d-flex flex-column align-items-end">
-                  <h4>Tổng tiền: 20000000</h4>
-                  <p>Thuế và phí vẫn chuyển được tính khi thanh toán</p>
-                  <Link to="/checkout" className="button">
-                    Thanh toán
-                  </Link>
-                </div>
+                {(totalAmount !== null || totalAmount !== 0) && (
+                  <div className="d-flex flex-column align-items-end">
+                    <h4>
+                      Tổng tiền:{" "}
+                      {Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(totalAmount)}
+                    </h4>
+                    <p>Thuế và phí vẫn chuyển được tính khi thanh toán</p>
+                    <Link to="/checkout" className="button">
+                      Thanh toán
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>
