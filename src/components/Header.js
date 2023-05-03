@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 const Header = () => {
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state?.auth?.cartProducts);
+  const authState = useSelector((state) => state.auth);
   const [total, setTotal] = useState(null);
   useEffect(() => {
     let sum = 0;
@@ -91,13 +92,20 @@ const Header = () => {
                 </div>
                 <div>
                   <Link
-                    to="/login"
+                    to={authState?.user === null ? "/login" : ""}
                     className="d-flex algin-items-center gap-10 text-white"
                   >
                     <img src={user} alt="user" />
-                    <p className="mb-0">
-                      Đăng nhập <br /> tài khoản
-                    </p>
+                    {authState?.user === null ? (
+                      <p className="mb-0">
+                        Đăng nhập <br /> tài khoản
+                      </p>
+                    ) : (
+                      <p className="mb-0">
+                        Chào <br />
+                        {authState?.user?.firstname}
+                      </p>
+                    )}
                   </Link>
                 </div>
                 <div>
