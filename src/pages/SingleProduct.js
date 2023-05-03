@@ -8,21 +8,33 @@ import ReactImageZoom from "react-image-zoom";
 import Color from "../components/Color";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { getAProduct } from "../features/products/productSlice";
-import { addProdToCart } from "../features/user/userSlice";
+import { addProdToCart, getUserCart } from "../features/user/userSlice";
 
 const SingleProduct = () => {
   const [color, setColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [alreadyAdded, setAlreadyAdded] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const getProductId = location.pathname.split("/")[2];
   const dispatch = useDispatch();
   const productState = useSelector((state) => state.product.singleproduct);
+  const cartState = useSelector((state) => state.auth.cartProducts);
   useEffect(() => {
     dispatch(getAProduct(getProductId));
+    dispatch(getUserCart());
+  }, []);
+
+  useEffect(() => {
+    for (let index = 0; index < cartState.length; index++) {
+      if (getProductId === cartState[index]?.productId?._id) {
+        setAlreadyAdded(true);
+      }
+    }
   }, []);
 
   const uploadCart = () => {
@@ -38,6 +50,7 @@ const SingleProduct = () => {
           price: productState?.price,
         })
       );
+      navigate("/cart");
     }
   };
   const props = {
@@ -127,7 +140,7 @@ const SingleProduct = () => {
                   <h3 className="product-heading">Tình trạng: </h3>
                   <p className="product-data">Còn hàng</p>
                 </div>
-                <div className="d-flex gap-10 flex-column mt-2 mb-3">
+                {/* <div className="d-flex gap-10 flex-column mt-2 mb-3">
                   <h3 className="product-heading">Kích thước: </h3>
                   <div className="d-flex flex-wrap gap-15">
                     <span className="badge border border-1 bg-white text-dark border-secondary">
@@ -143,37 +156,55 @@ const SingleProduct = () => {
                       XXL
                     </span>
                   </div>
-                </div>
-                <div className="d-flex gap-10 flex-column mt-2 mb-3">
-                  <h3 className="product-heading">Màu sắc: </h3>
-                  <Color setColor={setColor} colorData={productState?.color} />
-                </div>
+                </div> */}
+                {alreadyAdded === false && (
+                  <>
+                    {" "}
+                    <div className="d-flex gap-10 flex-column mt-2 mb-3">
+                      <h3 className="product-heading">Màu sắc: </h3>
+                      <Color
+                        setColor={setColor}
+                        colorData={productState?.color}
+                      />
+                    </div>
+                  </>
+                )}
                 <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
-                  <h3 className="product-heading">Số lượng: </h3>
-                  <div className="">
-                    <input
-                      type="number"
-                      name=""
-                      min={1}
-                      max={10}
-                      className="form-control"
-                      style={{ width: "70px" }}
-                      id=""
-                      onChange={(e) => setQuantity(e.target.value)}
-                      value={quantity}
-                    />
-                  </div>
-                  <div className="d-flex align-items-center gap-30 ms-5">
+                  {alreadyAdded === false && (
+                    <>
+                      <h3 className="product-heading">Số lượng: </h3>
+                      <div className="">
+                        <input
+                          type="number"
+                          name=""
+                          min={1}
+                          max={10}
+                          className="form-control"
+                          style={{ width: "70px" }}
+                          id=""
+                          onChange={(e) => setQuantity(e.target.value)}
+                          value={quantity}
+                        />
+                      </div>
+                    </>
+                  )}
+                  <div
+                    className={
+                      alreadyAdded
+                        ? "ms-0"
+                        : "ms-5" + "d-flex align-items-center gap-30 ms-5"
+                    }
+                  >
                     <button
                       className="button border-0"
                       type="button"
                       onClick={() => {
-                        uploadCart();
+                        alreadyAdded ? navigate("/cart") : uploadCart();
                       }}
                     >
-                      Thêm vào giỏ
+                      {alreadyAdded ? "Đi đến giỏ hàng" : "Thêm vào giỏ"}
                     </button>
-                    <button className="button signup">Mua ngay</button>
+                    {/* <button className="button signup">Mua ngay</button> */}
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-15">
