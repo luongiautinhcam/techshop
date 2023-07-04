@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import compare from "../images/compare.svg";
 import wishlist from "../images/wishlist.svg";
 import cart from "../images/cart.svg";
 import user from "../images/user.svg";
 import { useDispatch, useSelector } from "react-redux";
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 const Header = () => {
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state.auth);
+  const pCategoryState = useSelector((state) => state.pCategory.pCategories);
+  const productState = useSelector((state) => state?.product?.product);
+  const [productOpt, setProductOpt] = useState([]);
+  const [paginate, setPaginate] = useState(true);
+  const navigate = useNavigate();
   const [total, setTotal] = useState(null);
   useEffect(() => {
     let sum = 0;
@@ -21,6 +28,18 @@ const Header = () => {
       setTotal(sum);
     }
   });
+  useEffect(() => {
+    let data = [];
+    for (let index = 0; index < productState.length; index++) {
+      const element = productState[index];
+      data.push({ id: index, prod: element?._id, name: element?.title });
+    }
+    setProductOpt(data);
+  }, [productState]);
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
   return (
     <>
       <header className="header-top-strip py-3">
@@ -54,12 +73,17 @@ const Header = () => {
             </div>
             <div className="col-5">
               <div className="input-group">
-                <input
-                  type="text"
-                  className="form-control py-2"
+                <Typeahead
+                  id="pagination-example"
+                  onPaginate={() => console.log("Results paginated")}
+                  onChange={(selected) => {
+                    navigate(`/product/${selected[0].prod}`);
+                  }}
+                  options={productOpt}
+                  paginate={paginate}
+                  labelKey={"name"}
+                  minLength={2}
                   placeholder="Tìm sản phẩm ở đây..."
-                  aria-label="Tìm sản phẩm ở đây..."
-                  aria-describedby="basic-addon2"
                 />
                 <span className="input-group-text p-3" id="basic-addon2">
                   <BsSearch className="fs-5" />
@@ -92,7 +116,7 @@ const Header = () => {
                 </div>
                 <div>
                   <Link
-                    to={authState?.user === null ? "/login" : ""}
+                    to={authState?.user === null ? "/login" : "/my-profile"}
                     className="d-flex algin-items-center gap-10 text-white"
                   >
                     <img src={user} alt="user" />
@@ -155,21 +179,16 @@ const Header = () => {
                       className="dropdown-menu"
                       aria-labelledby="dropdownMenuButton1"
                     >
-                      <li>
-                        <Link className="dropdown-item text-white" to="#">
-                          Action
-                        </Link>
-                      </li>
-                      <li>
-                        <Link className="dropdown-item text-white" to="#">
-                          Another action
-                        </Link>
-                      </li>
-                      <li>
-                        <Link className="dropdown-item text-white" to="#">
-                          Something else here
-                        </Link>
-                      </li>
+                      {pCategoryState &&
+                        pCategoryState?.map((item, index) => {
+                          return (
+                            <li key={index}>
+                              <Link className="dropdown-item text-white" to="#">
+                                {item.title}
+                              </Link>
+                            </li>
+                          );
+                        })}
                     </ul>
                   </div>
                 </div>
@@ -179,7 +198,25 @@ const Header = () => {
                     <NavLink to="/product">Cửa hàng</NavLink>
                     <NavLink to="/blog">Blogs</NavLink>
                     <NavLink to="/contact">Liên hệ</NavLink>
+                    {authState?.user === null ? (
+                      ""
+                    ) : (
+                      <NavLink to="/my-orders">Đơn hàng</NavLink>
+                    )}
                   </div>
+                </div>
+                <div className="flex-end">
+                  {authState?.user === null ? (
+                    ""
+                  ) : (
+                    <button
+                      onClick={handleLogout}
+                      type="button"
+                      className="btn btn-danger"
+                    >
+                      Đăng xuất
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
