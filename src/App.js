@@ -23,6 +23,9 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import { PrivateRoutes } from "./routing/PrivateRoutes";
 import { OpenRoutes } from "./routing/OpenRoutes";
+import Profile from "./pages/Profile";
+import Orders from "./pages/Orders";
+import SingleOrder from "./pages/SingleOrder";
 
 function App() {
   return (
@@ -42,6 +45,30 @@ function App() {
               element={
                 <PrivateRoutes>
                   <Cart />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="my-orders"
+              element={
+                <PrivateRoutes>
+                  <Orders />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="my-order/:id"
+              element={
+                <PrivateRoutes>
+                  <SingleOrder />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="my-profile"
+              element={
+                <PrivateRoutes>
+                  <Profile />
                 </PrivateRoutes>
               }
             />
@@ -79,7 +106,7 @@ function App() {
               }
             />
             <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password" element={<ResetPassword />} />
+            <Route path="reset-password/:token" element={<ResetPassword />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="refund-policy" element={<RefundPolicy />} />
             <Route path="shipping-policy" element={<ShippingPolicy />} />

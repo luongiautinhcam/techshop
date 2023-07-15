@@ -1,16 +1,102 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Table } from "antd";
+import { AiFillDelete, AiOutlineEye } from "react-icons/ai";
+import { GiCancel } from "react-icons/gi";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import CustomModal from "../components/CustomModal";
 import BreadCrumb from "../components/BreadCrumb";
 import Container from "../components/Container";
-import { getOrders } from "../features/user/userSlice";
+import { getUserOrder } from "../features/user/userSlice";
+
+const columns = [
+  {
+    title: "STT",
+    dataIndex: "key",
+  },
+  {
+    title: "Mã đơn hàng",
+    dataIndex: "id",
+  },
+  {
+    title: "Ngày tạo đơn",
+    dataIndex: "date",
+  },
+  {
+    title: "Thành tiền",
+    dataIndex: "amount",
+  },
+  {
+    title: "Trạng thái",
+    dataIndex: "status",
+  },
+  {
+    title: "Hành động",
+    dataIndex: "action",
+  },
+];
 
 const Orders = () => {
   const dispatch = useDispatch();
-  const orderState = useSelector((state) => state?.auth?.getOrdered?.orders);
-
   useEffect(() => {
-    dispatch(getOrders());
+    dispatch(getUserOrder());
   }, []);
+
+  const orderState = useSelector((state) => state.auth.getOrdered);
+  const data1 = [];
+  for (let i = 0; i < orderState.length; i++) {
+    data1.push({
+      key: i + 1,
+      id: orderState[i]._id,
+      date: new Date(orderState[i].createdAt).toLocaleString(),
+
+      amount: Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }).format(orderState[i].totalPriceAfterDiscount),
+      // name: orderState[i].user.firstname + " " + orderState[i].user.lastname,
+      // product: <Link to={`/admin/`}>Xem đơn hàng</Link>,
+      status: orderState[i].orderStatus,
+      // <>
+      //   <select
+      //     name=""
+      //     defaultValue={
+      //       orderState[i].orderStatus
+      //         ? orderState[i].orderStatus
+      //         : "Da dat hang"
+      //     }
+      //     className="form-control form-select"
+      //     id=""
+      //     onChange={(e) => setOrderStatus(e.target.value, orderState[i]._id)}
+      //   >
+      //     <option value="Da dat hang">Đã đặt hàng</option>
+      //     <option value="Da thanh toan">Đã thanh toán</option>
+      //     <option value="Chua xac nhan">Chưa xác nhận</option>
+      //     <option value="Da xa nhan">Đã xác nhận</option>
+      //     <option value="Cho giao hang">Chờ giao hàng</option>
+      //     <option value="Dang giao hang">Đang giao hàng</option>
+      //     <option value="Da giao hang">Đã giao hàng</option>
+      //     <option value="Da huy">Đã huỷ</option>
+      //   </select>
+      // </>
+      action: (
+        <>
+          <Link
+            className="ms-3 fs-3 text-danger"
+            to={`/my-order/${orderState[i]._id}`}
+          >
+            <AiOutlineEye />
+          </Link>
+          <button
+            className="fs-3 text-danger ms-3 bg-transparent border-0"
+            // onClick={() => showModal(orderState[i]._id)}
+          >
+            {orderState[i].orderStatus === "Da xac nhan" ? null : <GiCancel />}
+          </button>
+        </>
+      ),
+    });
+  }
   return (
     <>
       <BreadCrumb title="Đơn hàng của tôi" />
@@ -70,7 +156,7 @@ const Orders = () => {
               })}
           </div>
         </div> */}
-        <div className="row">
+        {/* <div className="row">
           <div className="d-flex justify-content-between align-items-center">
             <h3 className="my-3">Danh sách đơn hàng</h3>
           </div>
@@ -143,7 +229,7 @@ const Orders = () => {
                                       {item?.orderItems?.map((i, id) => {
                                         return (
                                           <tr key={id}>
-                                            <td>{i?.product.title}</td>
+                                            <td>{i?.product?.title}</td>
                                             <td>{i?.color.title}</td>
                                             <td>{i?.quantity}</td>
                                             <td>
@@ -177,6 +263,20 @@ const Orders = () => {
                 })}
             </tbody>
           </table>
+        </div> */}
+        <div>
+          <h3 className="mb-4 title">Đơn hàng</h3>
+          <div>
+            <Table columns={columns} dataSource={data1} />
+          </div>
+          {/* <CustomModal
+            hideModal={hideModal}
+            open={open}
+            performAction={() => {
+              deleteOrder(orderId);
+            }}
+            title="Bạn có muốn xoá đơn hàng"
+          /> */}
         </div>
       </Container>
     </>

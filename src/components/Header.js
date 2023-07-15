@@ -8,9 +8,15 @@ import user from "../images/user.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
+import { getUserOrder } from "../features/user/userSlice";
+import { getCategories } from "../features/pcategory/pcategorySlice";
 
 const Header = () => {
   const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUserOrder());
+    dispatch(getCategories());
+  }, []);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state.auth);
   const pCategoryState = useSelector((state) => state.pCategory.pCategories);
@@ -140,14 +146,16 @@ const Header = () => {
                     <img src={cart} alt="cart" />
                     <div className="d-flex flex-column gap-10">
                       <span className="badge bg-white text-dark">
-                        {cartState?.length ? cartState?.length : 0}
+                        {cartState?.length ? cartState?.length : ""}
                       </span>
-                      <p className="mb-0">
-                        {Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(total ? total : 0)}
-                      </p>
+                      {/* <p className="mb-0">
+                        {cartState?.length === 0
+                          ? ""
+                          : Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(total ? total : 0)}
+                      </p> */}
                     </div>
                   </Link>
                 </div>

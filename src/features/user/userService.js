@@ -57,6 +57,59 @@ const updateProductFromCart = async (cartDetail) => {
   }
 };
 
+//cap nhat thong tin user
+const updateUser = async (data) => {
+  const response = await axios.put(`${base_url}user/edit-user`, data, config);
+  if (response.data) {
+    return response.data;
+  }
+};
+
+//lay lai mat khau
+const forgotPassToken = async (data) => {
+  const response = await axios.post(
+    `${base_url}user/forgot-password-token`,
+    data
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+//dat lai mat khau
+const resetPass = async (data) => {
+  const response = await axios.put(
+    `${base_url}user/reset-password/${data.token}`,
+    { password: data?.password }
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
+
+//lay danh sach don hang cua user
+const getUserOrders = async () => {
+  const response = await axios.get(`${base_url}user/getmyorders`, config);
+  if (response.data) {
+    return response.data;
+  }
+};
+
+const getUserOrder = async (id) => {
+  const response = await axios.get(`${base_url}user/getmyorder/${id}`, config);
+  return response.data;
+};
+
+//tao don hang
+const addOrders = async (data) => {
+  const response = await axios.post(
+    `${base_url}user/cart/create-order`,
+    data,
+    config
+  );
+  if (response.data) {
+    return response.data;
+  }
+};
 export const authService = {
   register,
   login,
@@ -65,4 +118,10 @@ export const authService = {
   getCart,
   removeProductFromCart,
   updateProductFromCart,
+  getUserOrders,
+  getUserOrder,
+  updateUser,
+  forgotPassToken,
+  resetPass,
+  addOrders,
 };

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   deleteCartProduct,
   getUserCart,
+  resetState,
   updateCartProduct,
 } from "../features/user/userSlice";
 
@@ -20,6 +21,7 @@ const Cart = () => {
   const userCartState = useSelector((state) => state.auth.cartProducts);
   useEffect(() => {
     dispatch(getUserCart());
+    dispatch(resetState());
   }, []);
   useEffect(() => {
     if (productUpdateDetail !== null) {
@@ -29,6 +31,7 @@ const Cart = () => {
           quantity: productUpdateDetail?.quantity,
         })
       );
+      dispatch(resetState());
       setTimeout(() => {
         dispatch(getUserCart());
       }, 200);
@@ -36,6 +39,7 @@ const Cart = () => {
   }, [productUpdateDetail]);
   const deleteACartProduct = (id) => {
     dispatch(deleteCartProduct(id));
+    dispatch(resetState());
     setTimeout(() => {
       dispatch(getUserCart());
     }, 200);
@@ -79,14 +83,14 @@ const Cart = () => {
                       </div>
                       <div className="w-75">
                         <p>{item?.productId?.title}</p>
-                        <p className="d-flex gap-3">
-                          Màu:
+                        <div className="d-flex gap-3">
+                          <span>Màu:</span>
                           <ul className="colors ps-0">
                             <li
                               style={{ backgroundColor: item?.color?.title }}
                             ></li>
                           </ul>
-                        </p>
+                        </div>
                       </div>
                     </div>
                     <div className="cart-col-2">
@@ -148,10 +152,15 @@ const Cart = () => {
                   <div className="d-flex flex-column align-items-end">
                     <h4>
                       Tổng tiền:{" "}
-                      {Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(totalAmount)}
+                      {userCartState?.length === 0
+                        ? Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(0)
+                        : Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(totalAmount)}
                     </h4>
                     <p>Thuế và phí vẫn chuyển được tính khi thanh toán</p>
                     <Link to="/checkout" className="button">

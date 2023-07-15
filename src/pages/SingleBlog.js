@@ -34,7 +34,7 @@ const SingleBlog = () => {
               <h3 className="title">{blogState?.title}</h3>
               <img
                 src="/images/blog-1.jpg"
-                className="img-fluid w-100 my-4"
+                className="img-fluid w-50 my-4"
                 alt="blog"
               />
               <p

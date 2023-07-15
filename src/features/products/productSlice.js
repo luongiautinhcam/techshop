@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { productService } from "./productService";
+import { toast } from "react-toastify";
 
 export const getAllProducts = createAsyncThunk(
   "product/get",
@@ -28,6 +29,28 @@ export const addToWishlist = createAsyncThunk(
   async (prodId, thunkAPI) => {
     try {
       return await productService.addToWishlist(prodId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const updateAProductQuantity = createAsyncThunk(
+  "product/update-product-quantity",
+  async (productData, thunkAPI) => {
+    try {
+      return await productService.updateProductQuantity(productData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const ratingProduct = createAsyncThunk(
+  "product/rating",
+  async (data, thunkAPI) => {
+    try {
+      return await productService.ratingProduct(data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -71,9 +94,41 @@ export const productSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.addToWishlist = action.payload;
-        state.message = "Sản phẩm đã được thêm vào Yêu thích";
+        toast.success("Sản phẩm đã được thêm vào danh sách yêu thích");
       })
       .addCase(addToWishlist.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(updateAProductQuantity.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateAProductQuantity.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.updatedProductQuantity = action.payload;
+        toast.success("Cập nhật số lượng sản phẩm thành công");
+      })
+      .addCase(updateAProductQuantity.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(ratingProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(ratingProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.rated = action.payload;
+        toast.success("Đánh giá sản phẩm thành công");
+      })
+      .addCase(ratingProduct.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
@@ -87,7 +142,7 @@ export const productSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.singleproduct = action.payload;
-        state.message = "Lấy sản phẩm thành công";
+        state.productRatings = action.payload.ratings;
       })
       .addCase(getAProduct.rejected, (state, action) => {
         state.isLoading = false;

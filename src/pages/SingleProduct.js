@@ -11,8 +11,27 @@ import { AiOutlineHeart } from "react-icons/ai";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { getAProduct } from "../features/products/productSlice";
-import { addProdToCart, getUserCart } from "../features/user/userSlice";
+import {
+  addToWishlist,
+  getAProduct,
+  ratingProduct,
+} from "../features/products/productSlice";
+import {
+  addProdToCart,
+  getUserCart,
+  resetState,
+} from "../features/user/userSlice";
+
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+import Box from "@mui/material/Box";
+import Rating from "@mui/material/Rating";
+
+const reviewSchema = yup.object({
+  star: yup.number().required("Bạn phải chọn đánh giá từ 1 đến 5 sao"),
+  comment: yup.string().required("Nội dung bình luận không được để trống"),
+});
 
 const SingleProduct = () => {
   const [color, setColor] = useState(null);
@@ -23,7 +42,10 @@ const SingleProduct = () => {
   const getProductId = location.pathname.split("/")[2];
   const dispatch = useDispatch();
   const productState = useSelector((state) => state.product.singleproduct);
+  const ratingsOldState = useSelector((state) => state.product);
+  const { productRatings } = ratingsOldState;
   const cartState = useSelector((state) => state.auth.cartProducts);
+
   useEffect(() => {
     dispatch(getAProduct(getProductId));
     dispatch(getUserCart());
@@ -36,6 +58,20 @@ const SingleProduct = () => {
       }
     }
   }, []);
+
+  //đánh giá
+  const formik = useFormik({
+    initialValues: {
+      star: "",
+      comment: "",
+      prodId: getProductId,
+    },
+    validationSchema: reviewSchema,
+    onSubmit: (values) => {
+      dispatch(ratingProduct(values));
+      dispatch(getAProduct(getProductId));
+    },
+  });
 
   const uploadCart = () => {
     if (color === null) {
@@ -50,7 +86,10 @@ const SingleProduct = () => {
           price: productState?.price,
         })
       );
-      navigate("/cart");
+      dispatch(resetState());
+      setTimeout(() => {
+        navigate("/cart");
+      }, 1000);
     }
   };
   const props = {
@@ -71,6 +110,14 @@ const SingleProduct = () => {
     document.execCommand("copy");
     textField.remove();
   };
+
+  const addToWish = (id) => {
+    dispatch(addToWishlist(id));
+  };
+
+  //số sao đánh giá
+  const [value, setValue] = React.useState(0);
+
   return (
     <>
       <Meta title={productState?.title} />
@@ -106,14 +153,20 @@ const SingleProduct = () => {
                   }).format(productState?.price)}
                 </p>
                 <div className="d-flex align-items-center gap-10">
-                  <ReactStars
-                    count={5}
-                    size={24}
-                    value={productState?.totalrating}
-                    edit={false}
-                    activeColor="#ffd700"
-                  />
-                  <p className="mb-0 t-review">(Dự trên 2 đánh giá)</p>
+                  <Box
+                    sx={{
+                      "& > legend": { mt: 2 },
+                    }}
+                  >
+                    <Rating
+                      name="read-only"
+                      value={parseInt(productState?.totalrating, 10)}
+                      readOnly
+                    />
+                  </Box>
+                  <p className="mb-0 t-review">
+                    {/* (Dự trên {productState.ratings.length} đánh giá) */}
+                  </p>
                 </div>
                 <Link to="/" className="review-btn" href="#review">
                   Viết đánh giá
@@ -121,16 +174,14 @@ const SingleProduct = () => {
               </div>
               <div className="py-3">
                 <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Loại: </h3>
-                  <p className="product-data">Đồng hồ</p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Hãng: </h3>
-                  <p className="product-data">{productState?.brand}</p>
+                  <p className="product-data">{productState?.brand[0].title}</p>
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Danh mục: </h3>
-                  <p className="product-data">{productState?.category}</p>
+                  <p className="product-data">
+                    {productState?.category[0].title}
+                  </p>
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Nhãn: </h3>
@@ -138,28 +189,12 @@ const SingleProduct = () => {
                 </div>
                 <div className="d-flex gap-10 align-items-center my-2">
                   <h3 className="product-heading">Tình trạng: </h3>
-                  <p className="product-data">Còn hàng</p>
+                  <p className="product-data">
+                    {productState?.quantity > 0 ? "Còn hàng" : "Hết hàng"}
+                  </p>
                 </div>
-                {/* <div className="d-flex gap-10 flex-column mt-2 mb-3">
-                  <h3 className="product-heading">Kích thước: </h3>
-                  <div className="d-flex flex-wrap gap-15">
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      S
-                    </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      M
-                    </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      XL
-                    </span>
-                    <span className="badge border border-1 bg-white text-dark border-secondary">
-                      XXL
-                    </span>
-                  </div>
-                </div> */}
                 {alreadyAdded === false && (
                   <>
-                    {" "}
                     <div className="d-flex gap-10 flex-column mt-2 mb-3">
                       <h3 className="product-heading">Màu sắc: </h3>
                       <Color
@@ -169,12 +204,31 @@ const SingleProduct = () => {
                     </div>
                   </>
                 )}
+                <div className="d-flex gap-10 align-items-center my-2">
+                  <h3 className="product-heading">Số lượng sản phẩm: </h3>
+                  <p className="product-data">{productState?.quantity}</p>
+                </div>
                 <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
                   {alreadyAdded === false && (
                     <>
                       <h3 className="product-heading">Số lượng: </h3>
                       <div className="">
-                        <input
+                        {productState?.quantity > 0 ? (
+                          <input
+                            type="number"
+                            name=""
+                            min={1}
+                            max={10}
+                            className="form-control"
+                            style={{ width: "70px" }}
+                            id=""
+                            onChange={(e) => setQuantity(e.target.value)}
+                            value={quantity}
+                          />
+                        ) : (
+                          ""
+                        )}
+                        {/* <input
                           type="number"
                           name=""
                           min={1}
@@ -184,7 +238,7 @@ const SingleProduct = () => {
                           id=""
                           onChange={(e) => setQuantity(e.target.value)}
                           value={quantity}
-                        />
+                        /> */}
                       </div>
                     </>
                   )}
@@ -195,7 +249,20 @@ const SingleProduct = () => {
                         : "ms-5" + "d-flex align-items-center gap-30 ms-5"
                     }
                   >
-                    <button
+                    {productState?.quantity > 0 ? (
+                      <button
+                        className="button border-0"
+                        type="button"
+                        onClick={() => {
+                          alreadyAdded ? navigate("/cart") : uploadCart();
+                        }}
+                      >
+                        {alreadyAdded ? "Đi đến giỏ hàng" : "Thêm vào giỏ"}
+                      </button>
+                    ) : (
+                      "Hết hàng"
+                    )}
+                    {/* <button
                       className="button border-0"
                       type="button"
                       onClick={() => {
@@ -203,7 +270,7 @@ const SingleProduct = () => {
                       }}
                     >
                       {alreadyAdded ? "Đi đến giỏ hàng" : "Thêm vào giỏ"}
-                    </button>
+                    </button> */}
                     {/* <button className="button signup">Mua ngay</button> */}
                   </div>
                 </div>
@@ -214,9 +281,12 @@ const SingleProduct = () => {
                     </Link>
                   </div>
                   <div>
-                    <Link to="/">
-                      <AiOutlineHeart className="fs-5 me-2" /> Thêm vào yêu
-                      thích
+                    <Link to="#">
+                      <AiOutlineHeart
+                        className="fs-5 me-2"
+                        onClick={() => addToWish(getProductId)}
+                      />
+                      Thêm vào yêu thích
                     </Link>
                   </div>
                 </div>
@@ -267,14 +337,20 @@ const SingleProduct = () => {
                 <div>
                   <h4 className="mb-2">Đánh giá người dùng</h4>
                   <div className="d-flex align-items-center gap-10">
-                    <ReactStars
-                      count={5}
-                      size={24}
-                      value={3}
-                      edit={false}
-                      activeColor="#ffd700"
-                    />
-                    <p className="mb-0">Dự trên 2 đánh giá</p>
+                    <Box
+                      sx={{
+                        "& > legend": { mt: 2 },
+                      }}
+                    >
+                      <Rating
+                        name="read-only"
+                        value={parseInt(productState?.totalrating, 10)}
+                        readOnly
+                      />
+                    </Box>
+                    <p className="mb-0">
+                      {/* (Dự trên {productState.ratings.length} đánh giá) */}
+                    </p>
                   </div>
                 </div>
                 {orderedProduct && (
@@ -290,50 +366,98 @@ const SingleProduct = () => {
               </div>
               <div className="review-form py-4">
                 <h4>Viết đánh giá</h4>
-                <form action="" className="d-flex flex-column gap-15">
+                <form
+                  action=""
+                  onSubmit={formik.handleSubmit}
+                  className="d-flex flex-column gap-15"
+                >
                   <div>
-                    <ReactStars
-                      count={5}
-                      size={24}
-                      value={4}
-                      edit={true}
-                      activeColor="#ffd700"
-                    />
+                    <Box
+                      sx={{
+                        "& > legend": { mt: 2 },
+                      }}
+                    >
+                      <Rating
+                        name="star"
+                        value={value}
+                        onChange={(event, newValue) => {
+                          setValue(newValue);
+                          formik.handleChange("star")(event);
+                          formik.handleBlur("star")(event);
+                        }}
+                        onBlur={() => {
+                          formik.handleBlur("star")();
+                        }}
+                        values={formik.values.star}
+                      />
+                      <div className="error">
+                        {formik.touched.star && formik.errors.star}
+                      </div>
+                    </Box>
                   </div>
                   <div>
                     <textarea
-                      name=""
-                      id=""
+                      name="comment"
                       className="w-100 form-control"
                       cols="30"
                       rows="4"
                       placeholder="Bình luận"
+                      onChange={formik.handleChange("comment")}
+                      onBlur={formik.handleBlur("comment")}
+                      values={formik.values.comment}
                     ></textarea>
+                    <div className="error">
+                      {formik.touched.comment && formik.errors.comment}
+                    </div>
                   </div>
                   <div className="d-flex justify-content-end">
-                    <button className="button border-0">Đánh giá</button>
+                    <button className="button border-0" type="submit">
+                      Đánh giá
+                    </button>
                   </div>
                 </form>
               </div>
               <div className="reviews mt-4">
-                <div className="review">
-                  <div className="d-flex gap-10 align-items-center">
-                    <h6 className="mb-0">Navdeep</h6>
-                    <ReactStars
-                      count={5}
-                      size={24}
-                      value={3}
-                      edit={false}
-                      activeColor="#ffd700"
-                    />
-                  </div>
-                  <p className="mt-3">
-                    It is a long established fact that a reader will be
-                    distracted by the readable content of a page when looking at
-                    its layout. The point of using Lorem Ipsum is that it has a
-                    more-or-less normal distribution of letters
-                  </p>
-                </div>
+                {productRatings?.map((item, index) => {
+                  return (
+                    <div key={index} className="card-body p-4">
+                      <div className="d-flex flex-start">
+                        <img
+                          className="rounded-circle shadow-1-strong me-3"
+                          src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(26).webp"
+                          alt="avatar"
+                          width="60"
+                          height="60"
+                        />
+                        <div>
+                          <h6 className="fw-bold mb-1">
+                            {item?.postedby.firstname +
+                              " " +
+                              item?.postedby.lastname}
+                          </h6>
+                          <div className="d-flex align-items-center mb-1">
+                            <p className="mb-0">{item?.postedby.createdAt}</p>
+                          </div>
+                          <div className="d-flex align-items-center mb-3">
+                            <Box
+                              className="d-flex align-items-center gap-10"
+                              sx={{
+                                "& > legend": { mt: 2 },
+                              }}
+                            >
+                              <Rating
+                                name="read-only"
+                                value={item?.star}
+                                readOnly
+                              />
+                            </Box>
+                          </div>
+                          <p className="mb-0">{item?.comment}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

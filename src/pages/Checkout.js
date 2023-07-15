@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
+import { FiEdit } from "react-icons/fi";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import {
+  addOrder,
+  deleteCartProduct,
+  resetState,
+} from "../features/user/userSlice";
+import { toast } from "react-toastify";
+import { getAllProducts } from "../features/products/productSlice";
 
 const shippingSchema = yup.object({
-  fisrtName: yup.string().required("Họ không được để trống"),
+  firstName: yup.string().required("Họ không được để trống"),
   lastName: yup.string().required("Tên không được để trống"),
+  mobile: yup.number().required("Số điện thoại không được để trống"),
   address: yup.string().required("Địa chỉ không được để trống"),
   state: yup.string().required("Quận không được để trống"),
   city: yup.string().required("Thành phố không được để trống"),
@@ -17,13 +26,19 @@ const shippingSchema = yup.object({
 
 const Checkout = () => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, []);
+  const navigate = useNavigate();
   const cartState = useSelector((state) => state.auth.cartProducts);
+  const userState = useSelector((state) => state.auth.user);
   const [totalAmount, setTotalAmount] = useState(null);
-  const [shippingInfo, setShippingInfo] = useState(null);
+  const [shippingInfoUser, setShippingInfoUser] = useState(null);
+  const [cartProductState, setCartProductState] = useState([]);
 
   //lay danh sach 63 tinh
   const [cities, setCities] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -48,22 +63,117 @@ const Checkout = () => {
       setTotalAmount(sum);
     }
   }, [cartState]);
-  const formik = useFormik({
-    initialValues: {
-      fisrtName: "",
+
+  //lay danh sach san pham trong gio hang
+  useEffect(() => {
+    let items = [];
+    for (let index = 0; index < cartState?.length; index++) {
+      items.push({
+        product: cartState[index].productId._id,
+        color: cartState[index].color._id,
+        quantity: cartState[index].quantity,
+        price: cartState[index].price,
+      });
+    }
+    setCartProductState(items);
+  }, []);
+
+  const hanldeSaveInfoUser = () => {
+    const totalAmountAfterShipping = totalAmount + 50000;
+    setTimeout(() => {
+      dispatch(
+        addOrder({
+          totalPrice: totalAmount,
+          totalPriceAfterDiscount: totalAmountAfterShipping,
+          orderItems: cartProductState,
+          shippingInfo: shippingInfoUser,
+        })
+      );
+      dispatch(resetState());
+      for (let index = 0; index < cartState?.length; index++) {
+        dispatch(deleteCartProduct(cartState[index]?._id));
+        dispatch(resetState());
+      }
+      setTimeout(() => {
+        navigate("/my-orders");
+      }, 1000);
+    }, 300);
+  };
+  console.log(userState);
+
+  const handleLinkClick = () => {
+    const emptyValues = {
+      firstName: "",
       lastName: "",
+      mobile: "",
       address: "",
       other: "",
       state: "",
       city: "",
       zipcode: "",
+    };
+    formik.setValues(emptyValues);
+  };
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      firstName: userState.firstname || "",
+      lastName: userState.lastname || "",
+      mobile: userState.mobile || "",
+      address: userState.address || "",
+      other: "",
+      state: userState.state || "",
+      city: userState.city || "",
+      zipcode: userState.zipcode || "",
     },
     validationSchema: shippingSchema,
     onSubmit: (values) => {
-      alert(JSON.stringify(values));
-      setShippingInfo(values);
+      const totalAmountAfterShipping = totalAmount + 50000;
+      setTimeout(() => {
+        dispatch(
+          addOrder({
+            totalPrice: totalAmount,
+            totalPriceAfterDiscount: totalAmountAfterShipping,
+            orderItems: cartProductState,
+            shippingInfo: shippingInfoUser,
+          })
+        );
+        dispatch(resetState());
+        for (let index = 0; index < cartState?.length; index++) {
+          dispatch(deleteCartProduct(cartState[index]?._id));
+          dispatch(resetState());
+        }
+        setTimeout(() => {
+          navigate("/my-orders");
+        }, 1000);
+      }, 300);
     },
   });
+
+  useEffect(() => {
+    if (formik.values.firstName || formik.values.lastName) {
+      setShippingInfoUser({
+        firstName: formik.values.firstName,
+        lastName: formik.values.lastName,
+        mobile: formik.values.mobile,
+        address: formik.values.address,
+        other: formik.values.other,
+        state: formik.values.state,
+        city: formik.values.city,
+        zipcode: formik.values.zipcode,
+      });
+    }
+  }, [
+    formik.values.firstName,
+    formik.values.lastName,
+    formik.values.mobile,
+    formik.values.address,
+    formik.values.other,
+    formik.values.state,
+    formik.values.city,
+    formik.values.zipcode,
+  ]);
   return (
     <>
       <Container class1="checkout-wrapper py-5 home-wrapper-2">
@@ -103,33 +213,33 @@ const Checkout = () => {
               </nav>
               <h4 className="title total total-price">Thông tin liên hệ</h4>
               <p className="user-details">
-                Tran Thanh Vinh (tranthanhvinh.info@gmail.com)
+                {userState?.firstname + " " + userState?.lastname + " "}(
+                {userState?.email})
               </p>
-              <h4 className="mb-3">Địa chỉ giao hàng</h4>
+              <div className="d-flex justify-content-between align-items-center">
+                <h4 className="mb-3">Địa chỉ giao hàng</h4>
+                <Link to="#" className="fs-4" onClick={handleLinkClick}>
+                  <FiEdit />
+                </Link>
+              </div>
+
               <form
                 action=""
                 onSubmit={formik.handleSubmit}
                 className="d-flex gap-15 flex-wrap justify-content-between"
               >
-                {/* <div className="w-100">
-                  <select name="" className="form-control form-select" id="">
-                    <option value="" selected disabled>
-                      Chọn quốc gia
-                    </option>
-                  </select>
-                </div> */}
                 <div className="flex-grow-1">
                   <input
-                    name="fisrtName"
+                    name="firstName"
                     type="text"
                     placeholder="Họ"
                     className="form-control"
-                    onChange={formik.handleChange("fisrtName")}
-                    onBlur={formik.handleBlur("fisrtName")}
-                    values={formik.values.fisrtName}
+                    onChange={formik.handleChange("firstName")}
+                    onBlur={formik.handleBlur("firstName")}
+                    value={formik.values.firstName}
                   />
                   <div className="error ms-2 my-1">
-                    {formik.touched.fisrtName && formik.errors.fisrtName}
+                    {formik.touched.firstName && formik.errors.firstName}
                   </div>
                 </div>
                 <div className="flex-grow-1">
@@ -140,10 +250,24 @@ const Checkout = () => {
                     className="form-control"
                     onChange={formik.handleChange("lastName")}
                     onBlur={formik.handleBlur("lastName")}
-                    values={formik.values.lastName}
+                    value={formik.values.lastName}
                   />
                   <div className="error ms-2 my-1">
                     {formik.touched.lastName && formik.errors.lastName}
+                  </div>
+                </div>
+                <div className="w-100">
+                  <input
+                    name="mobile"
+                    type="number"
+                    placeholder="Số điện thoại"
+                    className="form-control"
+                    onChange={formik.handleChange("mobile")}
+                    onBlur={formik.handleBlur("mobile")}
+                    value={formik.values.mobile}
+                  />
+                  <div className="error ms-2 my-1">
+                    {formik.touched.mobile && formik.errors.mobile}
                   </div>
                 </div>
                 <div className="w-100">
@@ -154,18 +278,11 @@ const Checkout = () => {
                     className="form-control"
                     onChange={formik.handleChange("address")}
                     onBlur={formik.handleBlur("address")}
-                    values={formik.values.address}
+                    value={formik.values.address}
                   />
                   <div className="error ms-2 my-1">
                     {formik.touched.address && formik.errors.address}
                   </div>
-                </div>
-                <div className="w-100">
-                  <input
-                    type="text"
-                    placeholder="Căn hộ, số nhà, vv"
-                    className="form-control"
-                  />
                 </div>
                 <div className="flex-grow-1">
                   <input
@@ -175,7 +292,7 @@ const Checkout = () => {
                     className="form-control"
                     onChange={formik.handleChange("state")}
                     onBlur={formik.handleBlur("state")}
-                    values={formik.values.state}
+                    value={formik.values.state}
                   />
                   <div className="error ms-2 my-1">
                     {formik.touched.state && formik.errors.state}
@@ -211,11 +328,22 @@ const Checkout = () => {
                     className="form-control"
                     onChange={formik.handleChange("zipcode")}
                     onBlur={formik.handleBlur("zipcode")}
-                    values={formik.values.zipcode}
+                    value={formik.values.zipcode}
                   />
                   <div className="error ms-2 my-1">
                     {formik.touched.zipcode && formik.errors.zipcode}
                   </div>
+                </div>
+                <div className="w-100">
+                  <input
+                    name="other"
+                    type="text"
+                    placeholder="Ghi chú"
+                    className="form-control"
+                    onChange={formik.handleChange("other")}
+                    onBlur={formik.handleBlur("other")}
+                    value={formik.values.other}
+                  />
                 </div>
                 <div className="w-100">
                   <div className="d-flex justify-content-between align-items-center">
@@ -227,7 +355,7 @@ const Checkout = () => {
                       Tiếp tục mua sắm
                     </Link>
                     <button className="button" type="submit">
-                      MUA NGAY
+                      Thanh toán
                     </button>
                   </div>
                 </div>
@@ -296,6 +424,24 @@ const Checkout = () => {
                   }).format(50000)}
                 </p>
               </div>
+            </div>
+            <div className="d-flex justify-content-between align-items-center border-bottom py-4">
+              <h4 className="total">Mã giảm giá</h4>
+              {/* <h5 className="total-price">
+                {Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(totalAmount ? totalAmount + 50000 : "0")}
+              </h5> */}
+              <input
+                name="discount"
+                type="text"
+                placeholder="Nhập mã giảm giá"
+                className="form-control w-50"
+                onChange={formik.handleChange("discount")}
+                onBlur={formik.handleBlur("discount")}
+                values={formik.values.discount}
+              />
             </div>
             <div className="d-flex justify-content-between align-items-center border-bottom py-4">
               <h4 className="total">Tổng tiền</h4>
