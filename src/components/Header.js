@@ -148,14 +148,6 @@ const Header = () => {
                       <span className="badge bg-white text-dark">
                         {cartState?.length ? cartState?.length : ""}
                       </span>
-                      {/* <p className="mb-0">
-                        {cartState?.length === 0
-                          ? ""
-                          : Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(total ? total : 0)}
-                      </p> */}
                     </div>
                   </Link>
                 </div>
@@ -191,7 +183,10 @@ const Header = () => {
                         pCategoryState?.map((item, index) => {
                           return (
                             <li key={index}>
-                              <Link className="dropdown-item text-white" to="#">
+                              <Link
+                                className="dropdown-item text-white"
+                                to={`/product/?category=${item?._id}`}
+                              >
                                 {item.title}
                               </Link>
                             </li>
@@ -209,22 +204,14 @@ const Header = () => {
                     {authState?.user === null ? (
                       ""
                     ) : (
-                      <NavLink to="/my-orders">Đơn hàng</NavLink>
+                      <>
+                        <NavLink to="/my-orders">Đơn hàng</NavLink>
+                        <NavLink to="" onClick={handleLogout}>
+                          Đăng xuất
+                        </NavLink>
+                      </>
                     )}
                   </div>
-                </div>
-                <div className="flex-end">
-                  {authState?.user === null ? (
-                    ""
-                  ) : (
-                    <button
-                      onClick={handleLogout}
-                      type="button"
-                      className="btn btn-danger"
-                    >
-                      Đăng xuất
-                    </button>
-                  )}
                 </div>
               </div>
             </div>
