@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import compare from "../images/compare.svg";
@@ -14,26 +15,33 @@ import { getCategories } from "../features/pcategory/pcategorySlice";
 const Header = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getUserOrder());
+    if (authState?.user === null) {
+    } else {
+      dispatch(getUserOrder());
+    }
     dispatch(getCategories());
   }, []);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
+  //lấy thông tin giỏ hàng tạm
+  const getTemporaryCart = () => {
+    const tempCart = Cookies.get("temporaryCart");
+    return tempCart ? JSON.parse(tempCart) : [];
+  };
+  const temporaryCart = getTemporaryCart();
   const authState = useSelector((state) => state.auth);
   const pCategoryState = useSelector((state) => state.pCategory.pCategories);
   const productState = useSelector((state) => state?.product?.product);
   const [productOpt, setProductOpt] = useState([]);
   const [paginate, setPaginate] = useState(true);
+  const [cartItemCount, setCartItemCount] = useState(0);
+  const [cartTempItemCount, setCartTempItemCount] = useState(0);
   const navigate = useNavigate();
-  const [total, setTotal] = useState(null);
   useEffect(() => {
-    let sum = 0;
-    for (let index = 0; index < cartState?.length; index++) {
-      sum =
-        sum +
-        Number(cartState[index].quantity) * Number(cartState[index].price);
-      setTotal(sum);
-    }
-  });
+    // Calculate the total cart items count whenever the cartState changes
+    setCartItemCount(cartState?.length || 0);
+    setCartTempItemCount(temporaryCart?.length || 0);
+  }, [cartState, temporaryCart]);
+
   useEffect(() => {
     let data = [];
     for (let index = 0; index < productState.length; index++) {
@@ -146,7 +154,11 @@ const Header = () => {
                     <img src={cart} alt="cart" />
                     <div className="d-flex flex-column gap-10">
                       <span className="badge bg-white text-dark">
-                        {cartState?.length ? cartState?.length : ""}
+                        {authState?.user === null ? (
+                          cartTempItemCount
+                        ) : (
+                          <>{cartItemCount ? cartItemCount : ""}</>
+                        )}
                       </span>
                     </div>
                   </Link>
